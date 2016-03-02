@@ -27,7 +27,7 @@ The following **optional** features are implemented:
 
 The following **additional** features are implemented:
 
-* [ ] List anything else that you can get done to improve the app functionality!
+* [X] User can press enter to add new item ( in MainActivity) and save ( in EditActivity).
 
 ## Video Walkthrough 
 
