@@ -34,7 +34,7 @@ public class Edit extends AppCompatActivity {
                 if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
                     Intent intent = new Intent();
                     intent.putExtra("MESSAGE","0");
-                   return true; // consumes the back key event - ActionMode is not finished
+                   return true;
 
                 }
 

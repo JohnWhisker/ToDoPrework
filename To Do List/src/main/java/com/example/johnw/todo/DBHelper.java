@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
 
@@ -31,21 +30,26 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
     //SQL ver 2.0 code
-    public boolean updateAfterAdapter(ArrayAdapter itemAdapter,ArrayList<String> items){
+    // This part where thing mess up. It keep saying array out of bound. 
+    public boolean updateAfterAdapter(TasksAdapter itemAdapter,ArrayList<Task> items){
         SQLiteDatabase db = getWritableDatabase();
-        String[] itemls = new String[items.size()];
+        if(items.size()!=0){
+        Task[] itemls = new Task[items.size()];
         itemls = items.toArray(itemls);
         db.execSQL("delete from "+"todo");
         for(int i=0;i<itemAdapter.getCount();i++){
             ContentValues contentValues = new ContentValues();
             contentValues.put("id",i);
-            contentValues.put("name",itemls[i]);
-            contentValues.put("date","");
-            db.insert("todo",null,contentValues);
+            contentValues.put("name",itemls[i].name);
+            contentValues.put("date",itemls[i].datetime);
+            db.insert("todo", null, contentValues);
         }
         return true;
     }
-    public boolean refreshTaskList(ArrayAdapter itemAdapter) {
+        return true;
+        }
+
+    public boolean refreshTaskList(TasksAdapter itemAdapter) {
         while(true){
         SQLiteDatabase db = this.getReadableDatabase();
         try{
@@ -58,7 +62,8 @@ public class DBHelper extends SQLiteOpenHelper {
         itemAdapter.clear();
         itemAdapter.notifyDataSetChanged();
         for (Data.moveToFirst(); !Data.isAfterLast(); Data.moveToNext()) {
-            itemAdapter.add(String.valueOf(Data.getString(1)));
+            Task newTask = new Task(Data.getString(1),Data.getString(2));
+            itemAdapter.add(newTask);
         }
         Data.close();
         break;
