@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
 
@@ -32,7 +33,7 @@ public class DBHelper extends SQLiteOpenHelper {
     //SQL ver 2.0 code
     // This part where thing mess up. It keep saying array out of bound. 
     public boolean updateAfterAdapter(TasksAdapter itemAdapter,ArrayList<Task> items){
-        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase db = this.getWritableDatabase();
         if(items.size()!=0){
         Task[] itemls = new Task[items.size()];
         itemls = items.toArray(itemls);
@@ -49,7 +50,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return true;
         }
 
-    public boolean refreshTaskList(TasksAdapter itemAdapter) {
+    public boolean refreshTaskList(TasksAdapter itemAdapter,ArrayList<Task> items) {
         while(true){
         SQLiteDatabase db = this.getReadableDatabase();
         try{
@@ -63,6 +64,7 @@ public class DBHelper extends SQLiteOpenHelper {
         itemAdapter.notifyDataSetChanged();
         for (Data.moveToFirst(); !Data.isAfterLast(); Data.moveToNext()) {
             Task newTask = new Task(Data.getString(1),Data.getString(2));
+            items.add(newTask);
             itemAdapter.add(newTask);
         }
         Data.close();
@@ -74,19 +76,20 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
     //SQL ver 1.0 code
-   /* public Integer deleteTask(ArrayAdapter itemAdapter,int pos){
+   public Integer deleteTask(int pos){
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete("todo","id = ? ",new String[] {Integer.toString(pos)});
     }
-    public boolean modifiedTaskList(ArrayAdapter itemAdapter,int possition,String name){
+    public boolean modifiedTaskList(int possition,String name,String date){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("name",name);
+        contentValues.put("date",date);
         db.update("todo",contentValues,"id = ?",new String[]{Integer.toString(possition)});
         return true;
     }
-    */
-     /* public boolean insertTask(ArrayAdapter<String> itemAdapter,String name,String date){
+
+      public boolean insertTask(ArrayAdapter<String> itemAdapter,String name,String date){
         int id;
         SQLiteDatabase dbr = this.getReadableDatabase();
         Cursor Data = dbr.rawQuery("select * from todo", null);
@@ -106,5 +109,5 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put("date", date);
         db.insert("todo", null, contentValues);
         return true;
-    }*/
+    }
 }

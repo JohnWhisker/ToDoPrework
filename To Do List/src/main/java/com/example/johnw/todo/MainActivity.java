@@ -1,4 +1,5 @@
 package com.example.johnw.todo;
+
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,8 @@ import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         items = new ArrayList<>();
 
         lvItem.setAdapter(itemsAdapter);
-        tododb.refreshTaskList(itemsAdapter);
+        tododb.refreshTaskList(itemsAdapter,items);
         setupListViewListener();
         EditText etNewItem = (EditText) findViewById(R.id.etNewItem);
         etNewItem.setOnKeyListener(new View.OnKeyListener() {
@@ -47,8 +50,12 @@ public class MainActivity extends AppCompatActivity {
                         date = sdf.format(myCalendar.getTime());
                     }
                     Task newTask = new Task(itemText,date);
+                    items.add(newTask);
                     itemsAdapter.add(newTask);
                     etNewItem.setText("");
+                    Toast noti = new Toast(getApplicationContext());
+                    noti.makeText(getApplicationContext(), "Task added",
+                            Toast.LENGTH_LONG).show();
                     tododb.updateAfterAdapter(itemsAdapter, items);
                     return true;
                 }
@@ -65,12 +72,17 @@ public class MainActivity extends AppCompatActivity {
             String message = data.getStringExtra("MESSAGE");
             //edit
             if (!message.equals("0")) {
-
-                Task newtask = items.get(pos2);
+                Task newtask = itemsAdapter.getItem(pos2);
                 Task writetask = new Task(message,newtask.datetime);
+                itemsAdapter.remove(itemsAdapter.getItem(pos2));
+                itemsAdapter.insert(writetask,pos2);
                 items.set(pos2,writetask);
                 itemsAdapter.notifyDataSetChanged();
-                tododb.updateAfterAdapter(itemsAdapter,items);
+                Toast noti = new Toast(getApplicationContext());
+                noti.makeText(getApplicationContext(), "Task saved",
+                        Toast.LENGTH_LONG).show();
+                //tododb.updateAfterAdapter(itemsAdapter,items);
+                //tododb.modifiedTaskList(pos2,writetask.name,writetask.datetime);
             }
         }
 
@@ -82,10 +94,13 @@ public class MainActivity extends AppCompatActivity {
                 new AdapterView.OnItemLongClickListener() {
                     @Override
                     public boolean onItemLongClick(AdapterView<?> adapter, View item, int position, long id) {
-
                         items.remove(position);
+                        itemsAdapter.remove(itemsAdapter.getItem(position));
                         itemsAdapter.notifyDataSetChanged();
-                        tododb.updateAfterAdapter(itemsAdapter, items);
+                        tododb.deleteTask(position);
+                        Toast noti = new Toast(getApplicationContext());
+                        noti.makeText(getApplicationContext(), "Task deleted",
+                                Toast.LENGTH_LONG).show();
                         return true;
                     }
                 }
@@ -96,7 +111,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         pos2 = position;
                         Intent intent = new Intent(context, Edit.class);
-                        startActivityForResult(intent, 2);
+                        startActivityForResult(intent,2);
+
                     }
                 }
         );
@@ -120,10 +136,8 @@ public class MainActivity extends AppCompatActivity {
         Task newTask = new Task(itemText,date);
         itemsAdapter.add(newTask);
         etNewItem.setText("");
-        tododb.updateAfterAdapter(itemsAdapter, items);
+        //tododb.updateAfterAdapter(itemsAdapter, items);
     }
-
-
     DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
 
         @Override
