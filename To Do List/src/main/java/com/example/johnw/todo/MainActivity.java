@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                 noti.makeText(getApplicationContext(), "Task saved",
                         Toast.LENGTH_LONG).show();
                 //tododb.updateAfterAdapter(itemsAdapter,items);
-                //tododb.modifiedTaskList(pos2,writetask.name,writetask.datetime);
+                tododb.modifiedTaskList(pos2,writetask.name,writetask.datetime);
             }
         }
 
@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         Task newTask = new Task(itemText,date);
         itemsAdapter.add(newTask);
         etNewItem.setText("");
-        //tododb.updateAfterAdapter(itemsAdapter, items);
+        tododb.updateAfterAdapter(itemsAdapter,items);
     }
     DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
 

@@ -89,7 +89,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return true;
     }
 
-      public boolean insertTask(ArrayAdapter<String> itemAdapter,String name,String date){
+      public boolean insertTask(ArrayAdapter<Task> itemAdapter,String name,String date){
         int id;
         SQLiteDatabase dbr = this.getReadableDatabase();
         Cursor Data = dbr.rawQuery("select * from todo", null);
